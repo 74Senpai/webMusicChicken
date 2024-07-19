@@ -9,7 +9,7 @@
 </head>
 <body>
     <header>
-        <div class="header">Hello World</div>
+        <div class="header"></div>
         <i class="fa-solid fa-gear"></i>
     </header>
     <div id="container">
@@ -37,7 +37,7 @@
             const app = new PlayMusicApp(`
                 <div class="song" data-index="@{index}">
                     <div class="img-mini">
-                        <img src="@{img}" alt="anh bai hat">
+                        <img src="./resources/img/test.png" alt="anh bai hat">
                     </div>
                     <div class="nameSong">@{name}</div>
                     <div class="author">@{author}</div>
@@ -50,6 +50,10 @@
             app.playMusic('click', 'button[name="play-btn"]', 'button[name="pause-btn"]');
             app.nextSong('click', 'button[name="next-btn"]');
             app.preSong('click', 'button[name="pre-btn"]');
+            app.randomSong('click', 'button[name="random-btn"]');
+            app.loopSong('click', 'button[name="loop-btn"]');
+            app.eventProcessor('click','.prossesses-bar' , 'button[name="playTime"]');
+
         });
     </script>
     
