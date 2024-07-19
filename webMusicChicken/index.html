@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./resources/styles/keyframe.css">
+    <link rel="stylesheet" href="./resources/styles/style.css">
+    <title>Music Play</title>
+</head>
+<body>
+    <header>
+        <div class="header">Hello World</div>
+        <i class="fa-solid fa-gear"></i>
+    </header>
+    <div id="container">
+        <div class="container-song">
+            <div class="img-song">
+                <img src="./resources/img/test.png" alt="Song Image">
+            </div>
+            <div class="prossesses-bar"><button name="playTime"></button></div>
+            <div class="control-bar">
+                <button name="loop-btn"><i class="fa-solid fa-arrows-rotate"></i></button>
+                <button name="pre-btn"><i class="fa-solid fa-backward"></i></button>
+                <button name="pause-btn"><i class="fa-solid fa-pause"></i></button>
+                <button name="play-btn"><i class="fa-solid fa-play"></i></button>
+                <button name="next-btn"><i class="fa-solid fa-forward"></i></button>
+                <button name="random-btn"><i class="fa-solid fa-shuffle"></i></button>
+            </div>
+        </div>
+        <div class="container-songLyrics"></div>
+        <div class="container-songList"></div>
+    </div>
+    <script src="https://kit.fontawesome.com/dae763dd72.js" crossorigin="anonymous"></script>
+    <script src="./resources/js/app.js"></script>
+    <script>
+         document.addEventListener("DOMContentLoaded", function() {
+            const app = new PlayMusicApp(`
+                <div class="song" data-index="@{index}">
+                    <div class="img-mini">
+                        <img src="@{img}" alt="anh bai hat">
+                    </div>
+                    <div class="nameSong">@{name}</div>
+                    <div class="author">@{author}</div>
+                    <div class="more"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+                </div>
+            `);
+            app.renderList("API",".container-songList");
+            //app.renderElement(".container-songList");
+            app.setCurrentSong(".container-songList > div", "active");
+            app.playMusic('click', 'button[name="play-btn"]', 'button[name="pause-btn"]');
+            app.nextSong('click', 'button[name="next-btn"]');
+            app.preSong('click', 'button[name="pre-btn"]');
+        });
+    </script>
+    
+</body>
+</html>
