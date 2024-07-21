@@ -78,9 +78,9 @@ header{
 
 .container-song .prossesses-bar > button{
     position: absolute;
-    background-color: rgba(69, 69, 69, 0.879);
+    background-color: rgba(201, 0, 0, 0.879);
     border: none;
-    height: 5px;
+    height: 6px;
     width: 0px;
     /* display: none; */
     /* border-radius: 50%; */
@@ -97,15 +97,15 @@ header{
 }
 
 .container-songList .song{
-    max-height: 70px;
     background-color: #0f0f0fe8;
     text-align: left;
     color: white;
     padding: 5px;
     border-radius: 3px;
-    height: 70px;
+    height: 55px;
     margin-bottom: 10px;
     box-shadow: 0px 4px 5px rgb(84, 73, 73);
+    max-height: 55px;
 }
 .container-songList .song .img-mini img{
     width: 50px;
@@ -113,40 +113,69 @@ header{
     border-radius: 50%;
 }
 .container-songList .song .img-mini{
-    display: inline-block;
-    position: relative;
-    top:8px;
-    left:0;
+    
 }
 .container-songList .song .more,
 .container-songList .song .nameSong,
 .container-songList .song .author{
-    display: inline-block;
-    max-width: 60%;
+    max-width: 90%;
     overflow: hidden;
     font-size: 14px;
     /* text-wrap: ; */
 }
 
 .container-songList .song .nameSong{
-    position: relative;
-    top:-10px;
-    left:10px;
+    height: 25px;
+    /* border: 1px solid black; */
+    display: block;
+    margin-left: 15px;
+    margin-top: 5px;
 }
 
 .container-songList .song .author{
-    position: relative;
-    top:10px;
-    left:-50%;
+    display: block;
+    font-size: 12px;
+    text-align: right;
+    color: #6d6a6a;
 }
 
+.more{
+    position: relative;
+    top: 15px;
+    left: 6px;
+    width: 5px;
+}
 
 #container .container-songLyrics{
     display: none;
 }
 
-.active{
-    background-color: #7a7a7ae7 !important;
-    border: 1px solid white;
+.control-bar .active{
+    background-color: #ffffff00;
+}
+
+.control-bar .active i{
+    color: #b300ff;
+}
+
+.container-songList .active{
+    background-color: #4d4d4deb ;
+}
+
+.infor-song{
+    display: inline-block;
+    /* background-color: red; */
+    width: 80%;
+    /* position: relative;
+    top:-15px;
+    left: 10px; */
+    /* max-height: 90%; */
+    height: 100%;
+}
+
+.row{
+    display: block;
+    float: left;
+    /* border: 1px solid black; */
 }
 /* ---------------------------///// ------------------------------- */

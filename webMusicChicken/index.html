@@ -28,7 +28,8 @@
             </div>
         </div>
         <div class="container-songLyrics"></div>
-        <div class="container-songList"></div>
+        <div class="container-songList">
+        </div>
     </div>
     <script src="https://kit.fontawesome.com/dae763dd72.js" crossorigin="anonymous"></script>
     <script src="./resources/js/app.js"></script>
@@ -36,24 +37,33 @@
          document.addEventListener("DOMContentLoaded", function() {
             const app = new PlayMusicApp(`
                 <div class="song" data-index="@{index}">
-                    <div class="img-mini">
+                    <div class="img-mini row">
                         <img src="./resources/img/test.png" alt="anh bai hat">
                     </div>
-                    <div class="nameSong">@{name}</div>
-                    <div class="author">@{author}</div>
-                    <div class="more"><i class="fa-solid fa-ellipsis-vertical"></i></div>
+                    <div class="infor-song row">
+                        <div class="nameSong">Dung lam trai tim anh dau</div>
+                        <div class="author">Nguyen Thanh Tung</div>
+                    </div>
+                    <div class="row">
+                        <div class="more"><i class="fa-solid fa-ellipsis-vertical"></i> </div>
+                    </div>
                 </div>
             `);
-            app.renderList("API",".container-songList");
-            //app.renderElement(".container-songList");
+            app.start("API",".container-songList");
             app.setCurrentSong(".container-songList > div", "active");
-            app.playMusic('click', 'button[name="play-btn"]', 'button[name="pause-btn"]');
-            app.nextSong('click', 'button[name="next-btn"]');
-            app.preSong('click', 'button[name="pre-btn"]');
-            app.randomSong('click', 'button[name="random-btn"]');
-            app.loopSong('click', 'button[name="loop-btn"]');
-            app.eventProcessor('click','.prossesses-bar' , 'button[name="playTime"]');
-            app.test();
+            app.eventProcessor('mouseover','.prossesses-bar' , 'button[name="playTime"]');
+            const control = app.appControl();
+            console.log("hihi",control);
+            control.playMusic('click', 'button[name="play-btn"]', 'button[name="pause-btn"]');
+            control.nextSong('click', 'button[name="next-btn"]');
+            control.preSong('click', 'button[name="pre-btn"]');
+            control.randomSong('click', 'button[name="random-btn"]');
+            control.loopSong('click', 'button[name="loop-btn"]');
+            control.changeSong('click', '.container-songList');
+
+
+            
+            
         });
     </script>
     
