@@ -19,27 +19,34 @@
     <script>
          document.addEventListener("DOMContentLoaded", async function() {
             const app = new MusicApp();
-            await app.getData('https://www.theaudiodb.com/api/v1/json/2/searchalbum.php?s=daft_punk');
-            app.createHTMLForList(`
-                <div class="song-tag">
-                    <div class="song" data-index=@{index}>
-                        <div class="img-mini row"><img src="@{img}" alt="@{alt}"></div>
-                        <div class="infor-song">
-                            <div class="nameSong">@{name_song}</div>
-                            <div class="author">@{author}</div>
-                        </div> 
-                        <div class="more">...</div> 
-                    </div>
-                </div>
-                `,
-                ""
-                ,
-                {   img : "./resources/img/test.png",
-                    name_song : "Dung Lam trai tim anh dau",
-                    author : "Nguyen Thanh Tung",
-                    alt : "day la anh",
-                }
-            );
+            const data = await app.getData('fakeAPI.json');
+            let tmp = await Object.keys(data.play_list).length;
+            // let dds = songList[0];
+            // console.log("sdadad", songList[0].img);
+            app.setLengthList(tmp);
+            const HTML = (()=>{
+                    let HTMLs = "";
+                    let songList = data.play_list;
+                    for(let i = 0 ; i < tmp ; i++){
+                        HTMLs += `
+                        <div class="song-tag">
+                            <div class="song" data-index=${i}>
+                                <audio preload="none">
+                                    <source src="${songList[i].audio_src}" type="audio/ogg">
+                                </audio>
+                                <div class="img-mini row"><img src="${songList[i].img}" alt="@{alt}"></div>
+                                <div class="infor-song">
+                                    <div class="nameSong">${songList[i].name_song}</div>
+                                    <div class="author">${songList[i].author}</div>
+                                </div> 
+                                <div class="more">...</div> 
+                            </div>
+                        </div>
+                         `
+                    }
+                    return HTMLs;
+                })();
+            app.createHTMLForList(``,HTML);
             app.renderStruct('#container-song');
             app.setCurrentSong('.song-tag','active');
             app.eventProcessor();

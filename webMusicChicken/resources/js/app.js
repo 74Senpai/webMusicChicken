@@ -13,6 +13,7 @@ class MusicApp {
         this.lengthList = 0;
         this.activeClassName = "";
         this.template = ``;
+        this.isPlay = false;
         this.dataAPI = null;
         this.HTMLForList = "";
         this.boxSetCurrent = "";
@@ -25,7 +26,6 @@ class MusicApp {
             const response = await fetch(API);
             const data = await response.json();
             _this.dataAPI = data;
-            _this.lengthList = _this.dataAPI.album.length;
             // console.log(data);
             return data;
         } catch (error) {
@@ -33,22 +33,15 @@ class MusicApp {
         }
     }
 
-    createHTMLForList(HTML,boxInner, data = {}) {
-        let HTMLs = "";
+    setLengthList(index){
+        this.lengthList = index;
+        return index;
+    }
+
+    createHTMLForList(boxInner, ...data) {
+        
         const _this = this;
-        console.log(_this.dataAPI);
-        console.log("legth ", _this.lengthList);
-        for (let i = 0; i < _this.lengthList; i++) {
-            let tempHTML = HTML.replace('@{index}', `${i}`); // required
-            for (let key in data) {
-                if (data.hasOwnProperty(key)) {
-                    tempHTML = tempHTML.replace(`@{${key}}`, `${data[key]}`);
-                }
-            }
-            HTMLs += tempHTML;
-        }
-        _this.HTMLForList = HTMLs;
-        return HTMLs;
+        _this.HTMLForList += data;
     }
 
     createLayout(layout){
@@ -88,20 +81,29 @@ class MusicApp {
 
     skipSong(isNext, isSelect = false) {
         const _this = this;
+        let onPlay = $(`[data-index="${_this.currenSong}"] audio`);
+        
+        onPlay.load();
+        onPlay.pause();
+        
+       
         if (!isSelect) {
             if (_this.isRandom) {
                 _this.currenSong = _this.getRndInteger(0, _this.lengthList - 1);
+                $(`[data-index="${_this.currenSong}"] audio`).load();
             } else {
                 if (isNext) {
                     _this.currenSong += 1;
                     if (_this.currenSong >= _this.lengthList) {
                         _this.currenSong = 0;
                     }
+                    $(`[data-index="${_this.currenSong}"] audio`).load();
                 } else {
                     _this.currenSong -= 1;
                     if (_this.currenSong < 0) {
                         _this.currenSong = _this.lengthList - 1;
                     }
+                    $(`[data-index="${_this.currenSong}"] audio`).load();
                 }
             }
         }
@@ -117,6 +119,10 @@ class MusicApp {
             act = $(`[data-index="${_this.currenSong}"]`).classList;
             act.add(_this.activeClassName);
         }
+        if(_this.isPlay){
+            
+            $(`[data-index="${_this.currenSong}"] audio`).play();
+        }
     }
 
     controlBar() {
@@ -126,13 +132,15 @@ class MusicApp {
                 $(playBtn).addEventListener(eventClient, () => {
                     $(playBtn).style.display = "none";
                     $(pauseBtn).style.display = "inline-block";
-                    $('audio').play();
+                    $(`[data-index="${_this.currenSong}"] audio`).play();
+                    _this.isPlay = true;
                 });
 
                 $(pauseBtn).addEventListener(eventClient, () => {
                     $(pauseBtn).style.display = "none";
                     $(playBtn).style.display = "inline-block";
-                    $('audio').pause();
+                    $(`[data-index="${_this.currenSong}"] audio`).pause();
+                    _this.isPlay = false;
                 });
             },
 
@@ -201,7 +209,7 @@ class MusicApp {
         this.typeActive = typeSelector;
         const _this = this;
         $(`[data-index="${_this.currenSong}"]`).classList.add(`${tag}`);
-        
+        $(`[data-index="${_this.currenSong}"] audio`).load();
     }
 
     getRndInteger(min, max) {

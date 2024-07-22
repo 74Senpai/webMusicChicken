@@ -28,6 +28,7 @@ function musicApp(){
         return dataAPI;
     }
 
+
     function renderStruct(template, boxForInnerHTML){
         if(template){
             $(`${boxForInnerHTML}`).innerHTML = template;
