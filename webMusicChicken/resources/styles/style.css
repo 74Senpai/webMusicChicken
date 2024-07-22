@@ -22,33 +22,38 @@ header{
 
 
 /* --------------------------- Body ------------------------------- */
-#container{
+#container-song{
     max-width: 400px;
     padding: 5px;
 }
-#container > div{
+#container-song-render > div{
     border-radius: 8px;
     margin: 5px;
     padding: 5px;
 }
 
-#container .container-song{
+#container-song #container-song-render .song-infor{
     height: 330px;
     background-color: blueviolet;
 }
-#container .container-song > .img-song > img{
+#container-song #container-song-render .img-song > img{
     width: 250px;
     height: 250px;
     border-radius: 50%;
     animation: rotateImg 20s linear infinite;
     z-index: 9;
 }
+.img-song{
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
 
-#container .container-song .control-bar{
+#container-song #container-song-render .control-bar{
     z-index: 99;
 }
 
-#container .container-song .control-bar > button{
+#container-song #container-song-render .control-bar > button{
     background-color: rgba(0,0,0,0);
     border: none;
     color: white;
@@ -60,10 +65,10 @@ header{
     width: 30px;
     height: 30px;
 }
-#container .container-song .control-bar button[name="pause-btn"]{
+#container-song #container-song-render .control-bar button[name="pause-btn"]{
     display: none;
 }
-#container .container-song .prossesses-bar{
+#container-song #container-song-render .prossesses-bar{
     width: 90%;
     height: 5px;
     background-color: rgba(255, 255, 255, 0.77);
@@ -76,7 +81,7 @@ header{
     text-align: left;
 }
 
-.container-song .prossesses-bar > button{
+#container-song-render .prossesses-bar > button{
     position: absolute;
     background-color: rgba(201, 0, 0, 0.879);
     border: none;
@@ -91,7 +96,7 @@ header{
 
 /* -------- */
 
-#container .container-songList{
+#container-song #container-song-render .container-songList{
     /* height: 50vh; */
     background-color: pink;
 }
@@ -140,13 +145,14 @@ header{
 }
 
 .more{
-    position: relative;
+    display: inline-block;
+    /* position: relative;
     top: 15px;
     left: 6px;
-    width: 5px;
+    width: 5px; */
 }
 
-#container .container-songLyrics{
+#container-song #container-song-render .container-songLyrics{
     display: none;
 }
 
@@ -165,7 +171,7 @@ header{
 .infor-song{
     display: inline-block;
     /* background-color: red; */
-    width: 80%;
+    width: 70%;
     /* position: relative;
     top:-15px;
     left: 10px; */

@@ -9,61 +9,47 @@
 </head>
 <body>
     <header>
-        <div class="header"></div>
-        <i class="fa-solid fa-gear"></i>
+    
     </header>
-    <div id="container">
-        <div class="container-song">
-            <div class="img-song">
-                <img src="./resources/img/test.png" alt="Song Image">
-            </div>
-            <div class="prossesses-bar"><button name="playTime"></button></div>
-            <div class="control-bar">
-                <button name="loop-btn"><i class="fa-solid fa-arrows-rotate"></i></button>
-                <button name="pre-btn"><i class="fa-solid fa-backward"></i></button>
-                <button name="pause-btn"><i class="fa-solid fa-pause"></i></button>
-                <button name="play-btn"><i class="fa-solid fa-play"></i></button>
-                <button name="next-btn"><i class="fa-solid fa-forward"></i></button>
-                <button name="random-btn"><i class="fa-solid fa-shuffle"></i></button>
-            </div>
-        </div>
-        <div class="container-songLyrics"></div>
-        <div class="container-songList">
-        </div>
-    </div>
+    <div id="container-song">
+        
+    </div>  
     <script src="https://kit.fontawesome.com/dae763dd72.js" crossorigin="anonymous"></script>
     <script src="./resources/js/app.js"></script>
     <script>
-         document.addEventListener("DOMContentLoaded", function() {
-            const app = new PlayMusicApp(`
-                <div class="song" data-index="@{index}">
-                    <div class="img-mini row">
-                        <img src="./resources/img/test.png" alt="anh bai hat">
-                    </div>
-                    <div class="infor-song row">
-                        <div class="nameSong">Dung lam trai tim anh dau</div>
-                        <div class="author">Nguyen Thanh Tung</div>
-                    </div>
-                    <div class="row">
-                        <div class="more"><i class="fa-solid fa-ellipsis-vertical"></i> </div>
+         document.addEventListener("DOMContentLoaded", async function() {
+            const app = new MusicApp();
+            await app.getData('https://www.theaudiodb.com/api/v1/json/2/searchalbum.php?s=daft_punk');
+            app.createHTMLForList(`
+                <div class="song-tag">
+                    <div class="song" data-index=@{index}>
+                        <div class="img-mini row"><img src="@{img}" alt="@{alt}"></div>
+                        <div class="infor-song">
+                            <div class="nameSong">@{name_song}</div>
+                            <div class="author">@{author}</div>
+                        </div> 
+                        <div class="more">...</div> 
                     </div>
                 </div>
-            `);
-            app.start("API",".container-songList");
-            app.setCurrentSong(".container-songList > div", "active");
-            app.eventProcessor('mouseover','.prossesses-bar' , 'button[name="playTime"]');
-            const control = app.appControl();
-            console.log("hihi",control);
-            control.playMusic('click', 'button[name="play-btn"]', 'button[name="pause-btn"]');
-            control.nextSong('click', 'button[name="next-btn"]');
-            control.preSong('click', 'button[name="pre-btn"]');
-            control.randomSong('click', 'button[name="random-btn"]');
-            control.loopSong('click', 'button[name="loop-btn"]');
-            control.changeSong('click', '.container-songList');
-
-
-            
-            
+                `,
+                ""
+                ,
+                {   img : "./resources/img/test.png",
+                    name_song : "Dung Lam trai tim anh dau",
+                    author : "Nguyen Thanh Tung",
+                    alt : "day la anh",
+                }
+            );
+            app.renderStruct('#container-song');
+            app.setCurrentSong('.song-tag','active');
+            app.eventProcessor();
+            const control = app.controlBar();
+            control.playMusic();
+            control.nextSong();
+            control.preSong();
+            control.randomSong();
+            control.loopSong();
+            control.changeSong();
         });
     </script>
     
