@@ -3,7 +3,8 @@ const $ = document.querySelector.bind(document);
 const $$ = document.querySelectorAll.bind(document);
 
 class MusicApp {
-    constructor() {
+    constructor(dataConfig) {
+        this.loadDataConfig(dataConfig);
         this.listSong = {};
         this.boxForInnerHTML = "";
         this.lengthList = 0;
@@ -30,6 +31,14 @@ class MusicApp {
         this.currenSong = config.currenSong;
     }
 
+    loadDataConfig(data){
+        if(!data){
+            console.log("ko co data");
+        }
+
+        this.dataConfig = data;
+    }
+
     saveConfig() {
         localStorage.setItem('musicAppConfig', JSON.stringify(this.confix));
     }
@@ -50,17 +59,25 @@ class MusicApp {
         return index;
     }
 
-    createHTMLForList(boxInner, ...data) {
+    async createHTMLForList(data) {
         this.HTMLForList += data;
     }
 
-    createLayout(layout) {
+    async createLayout(layout) {
         this.template = layout;
     }
 
-    renderStruct(boxForInnerHTML) {
+    async renderStruct(boxForInnerHTML) {
         if (this.template) {
-            $(boxForInnerHTML).innerHTML = this.template;
+           this.template = this.template 
+                .replace(`@{HTML-for-list}`, this.HTMLForList);
+            
+            for(let key in this.dataConfig){
+                this.template = this.template
+                    .replace(new RegExp(`@{${key}}`, 'g'), this.dataConfig[key]);
+                    // .replace(`@{${key}}`, this.dataConfig[key])     
+            }
+            await (()=>{$(boxForInnerHTML).innerHTML = this.template})();
         } else {
             this.template = `
                 <div id="container-song-render">
@@ -70,12 +87,17 @@ class MusicApp {
                         </div>
                         <div class="prossesses-bar"><button name="playTime"></button></div>
                         <div class="control-bar">
-                            <button id="loop" name="loop-btn"><i class="fa-solid fa-arrows-rotate"></i></button>
-                            <button id="pre" name="pre-btn"><i class="fa-solid fa-backward"></i></button>
-                            <button id="pause" name="pause-btn"><i class="fa-solid fa-pause"></i></button>
-                            <button id="play" name="play-btn"><i class="fa-solid fa-play"></i></button>
-                            <button id="next" name="next-btn"><i class="fa-solid fa-forward"></i></button>
-                            <button id="random" name="random-btn"><i class="fa-solid fa-shuffle"></i></button>
+                            <div class="control-play">
+                                <button id="loop" name="loop-btn"><i class="fa-solid fa-arrows-rotate"></i></button>
+                                <button id="pre" name="pre-btn"><i class="fa-solid fa-backward"></i></button>
+                                <button id="pause" name="pause-btn"><i class="fa-solid fa-pause"></i></button>
+                                <button id="play" name="play-btn"><i class="fa-solid fa-play"></i></button>
+                                <button id="next" name="next-btn"><i class="fa-solid fa-forward"></i></button>
+                                <button id="random" name="random-btn"><i class="fa-solid fa-shuffle"></i></button>
+                            </div>
+                            <div class="control-volume">
+                                <div id="volume" name="volume-btn"><i class="fa-solid fa-volume-off"></i></div>
+                            </div>
                         </div>
                     </div>
                     <div class="container-songLyrics">@{lyrics}</div>
@@ -84,17 +106,19 @@ class MusicApp {
                     </div>
                 </div>
                 ${this.fontButton}`;
-            $(boxForInnerHTML).innerHTML = this.template;
+            await ($(boxForInnerHTML).innerHTML = this.template)();
         }
     }
 
     skipSong(isNext, isSelect = false) {
+        const _this = this;
         let onPlay = $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} audio`);
+        onPlay.preload = "none";
         onPlay.load();
         onPlay.pause();
-        $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} .nameSong img`).src = "";
-        $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} .nameSong img`).style.display = "none";
-
+        $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} .${this.dataConfig.class_name_song} img`).src = "";
+        $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} .${this.dataConfig.class_name_song} img`).style.display = "none";
+        $(`.${_this.dataConfig.class_bar}`).innerText =  "";
         if (!isSelect) {
             if (this.isRandom) {
                 this.currenSong = this.getRndInteger(0, this.lengthList - 1);
@@ -113,17 +137,23 @@ class MusicApp {
             let act = $(`[data-index="${this.currenSong}"]`).classList;
             box.remove(this.activeClassName);
             act.add(this.activeClassName);
-            $(`.img-song img`).src = `${$(`[data-index="${this.currenSong}"] .img-mini img`).src}`;
+            $(`.${this.dataConfig.class_song_img} img`).src = `${$(`[data-index="${this.currenSong}"] .${this.dataConfig.class_song_img_mini} img`).src}`;
         } catch (err) {
             console.log("Có lỗi xảy ra:", err);
             let act = $(`[data-index="${this.currenSong}"]`).classList;
             act.add(this.activeClassName);
         }
+        let audioElement = $(`[data-index="${this.currenSong}"] audio`);
+        audioElement.preload = "auto";
+        audioElement.addEventListener('loadedmetadata', () => {
+            $(`.${_this.dataConfig.class_bar}`).innerText =  `${audioElement.duration}`;
+            audioElement.preload = "none";
+        });
 
         if (this.isPlay) {
-            $(`[data-index="${this.currenSong}"] audio`).play();
-            $(`[data-index="${this.currenSong}"] .nameSong img`).src = "https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif";
-            $(`[data-index="${this.currenSong}"] .nameSong img`).style.display = "inline-block";
+            audioElement.play();
+            $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).src = "https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif";
+            $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).style.display = "inline-block";
         }
 
         this.confix.currenSong = this.currenSong;
@@ -132,14 +162,13 @@ class MusicApp {
 
     controlBar() {
         const methods = {
-            playMusic: (eventClient = "click", playBtn = "#play", pauseBtn = "#pause") => {
+            playMusic: (eventClient = "click", playBtn = `#${this.dataConfig.id_play}`, pauseBtn = `#${this.dataConfig.id_pause}`) => {
                 $(playBtn).addEventListener(eventClient, () => {
                     $(playBtn).style.display = "none";
                     $(pauseBtn).style.display = "inline-block";
                     $(`[data-index="${this.currenSong}"] audio`).play();
-                    $(`[data-index="${this.currenSong}"] .nameSong img`).src = "https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif";
-                    $(`[data-index="${this.currenSong}"] .nameSong img`).style.display = "inline-block";
-                    
+                    $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).style.display = "inline-block";
+                    $(`[data-index="${this.currenSong}"] audio`).volume = "0.2";
                     this.isPlay = true;
                     this.confix.isRun = true;
                     this.saveConfig();
@@ -149,27 +178,27 @@ class MusicApp {
                     $(pauseBtn).style.display = "none";
                     $(playBtn).style.display = "inline-block";
                     $(`[data-index="${this.currenSong}"] audio`).pause();
-                    $(`[data-index="${this.currenSong}"] .nameSong img`).src = "";
-                    $(`[data-index="${this.currenSong}"] .nameSong img`).style.display = "none";
+                    $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).src = "";
+                    $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).style.display = "none";
                     this.isPlay = false;
                     this.confix.isRun = false;
                     this.saveConfig();
                 });
             },
 
-            nextSong: (eventClient = "click", nextBtn = "#next") => {
+            nextSong: (eventClient = "click", nextBtn = `#${this.dataConfig.id_next}`) => {
                 $(nextBtn).addEventListener(eventClient, () => {
                     this.skipSong(true);
                 });
             },
 
-            preSong: (eventClient = "click", preBtn = "#pre") => {
+            preSong: (eventClient = "click", preBtn = `#${this.dataConfig.id_pre}`) => {
                 $(preBtn).addEventListener(eventClient, () => {
                     this.skipSong(false);
                 });
             },
 
-            randomSong: (eventClient = "click", nameBtn = "#random") => {
+            randomSong: (eventClient = "click", nameBtn = `#${this.dataConfig.id_random}`) => {
                 const btn = $(nameBtn);
                 if(this.isRandom){
                     btn.classList.add(this.activeClassName);
@@ -186,7 +215,7 @@ class MusicApp {
                 });
             },
 
-            loopSong: (eventClient = "click", nameBtn = "#loop") => {
+            loopSong: (eventClient = "click", nameBtn = `#${this.dataConfig.id_loop}`) => {
                 const btn = $(nameBtn);
                 if(this.isLoop){
                     btn.classList.add(this.activeClassName);
@@ -203,7 +232,7 @@ class MusicApp {
                 });
             },
 
-            changeSong: (eventClient = "click", scale = ".container-songList") => {
+            changeSong: (eventClient = "click", scale = `.${this.dataConfig.class_song_list}`) => {
                 const scaleVar = $(scale);
                 scaleVar.addEventListener(eventClient, (e) => {
                     let tarGet = e.target;
@@ -227,21 +256,35 @@ class MusicApp {
         return methods;
     }
 
-    setCurrentSong(boxSetActiveSong, tag, typeSelector = ".") {
+    async setCurrentSong(boxSetActiveSong, tag, typeSelector = ".") {
         this.boxSetCurrent = boxSetActiveSong;
         this.activeClassName = tag;
         this.typeActive = typeSelector;
-        $(`[data-index="${this.confix.currenSong}"]`).classList.add(`${tag}`);
-        $(`[data-index="${this.confix.currenSong}"] audio`).load();
-        $(`.img-song img`).src = `${$(`[data-index="${this.currenSong}"] .img-mini img`).src}`;
+        const _this = this;
+    
+        const audioElement = $(`[data-index="${_this.currenSong}"] audio`);
+    
+        await (async () => {
+            $(`[data-index="${_this.currenSong}"]`).classList.add(`${tag}`);
+            audioElement.preload = "auto"; 
+            audioElement.load();      
+            $(`.${_this.dataConfig.class_song_img} img`).src = `${$(`[data-index="${_this.currenSong}"] .${_this.dataConfig.class_song_img_mini} img`).src}`;
+        })();
+    
+        audioElement.addEventListener('loadedmetadata', () => {
+            $(`.${_this.dataConfig.class_bar}`).innerText =  `${audioElement.duration}`;
+            audioElement.preload = "none";
+        });
     }
+    
 
     getRndInteger(min, max) {
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
-    eventProcessor(eventClient = 'click', bar = `.prossesses-bar`, playTimeBar = `button[name="playTime"]`) {
+    eventProcessor(eventClient = 'click', bar = `.${this.dataConfig.class_prosseses}`, playTimeBar = `.${this.dataConfig.class_bar}`) {
         const btn = $(bar);
+        console.log("bar," ,bar);
         const playTime = $(playTimeBar);
         let isDragging = false;
         let timeOut;
@@ -288,6 +331,11 @@ class MusicApp {
             const percent = Math.min(Math.max((x / width) * 100, 0), 100);
             playTime.style.width = `${percent}%`;
         }
+    }
+
+    endedEvent(){
+        
+        
     }
 }
 
