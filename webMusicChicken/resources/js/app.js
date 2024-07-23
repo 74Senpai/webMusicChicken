@@ -4,11 +4,7 @@ const $$ = document.querySelectorAll.bind(document);
 
 class MusicApp {
     constructor() {
-        this.currenSong = 0;
-        this.isRandom = false;
-        this.isLoop = false;
         this.listSong = {};
-        this.isRun = false;
         this.boxForInnerHTML = "";
         this.lengthList = 0;
         this.activeClassName = "";
@@ -18,45 +14,59 @@ class MusicApp {
         this.HTMLForList = "";
         this.boxSetCurrent = "";
         this.fontButton = `<script src="https://kit.fontawesome.com/dae763dd72.js" crossorigin="anonymous"></script>`;
+        this.loadConfig();
+    }
+
+    loadConfig() {
+        const config = JSON.parse(localStorage.getItem('musicAppConfig')) || {
+            isRun: false,
+            isLoop: false,
+            isRandom: false,
+            currenSong: 0
+        };
+        this.confix = config;
+        this.isLoop = config.isLoop;
+        this.isRandom = config.isRandom;
+        this.currenSong = config.currenSong;
+    }
+
+    saveConfig() {
+        localStorage.setItem('musicAppConfig', JSON.stringify(this.confix));
     }
 
     async getData(API) {
-        const _this = this;
         try {
             const response = await fetch(API);
             const data = await response.json();
-            _this.dataAPI = data;
-            // console.log(data);
+            this.dataAPI = data;
             return data;
         } catch (error) {
             console.error("Lỗi khi lấy dữ liệu từ API: ", error);
         }
     }
 
-    setLengthList(index){
+    setLengthList(index) {
         this.lengthList = index;
         return index;
     }
 
     createHTMLForList(boxInner, ...data) {
-        
-        const _this = this;
-        _this.HTMLForList += data;
+        this.HTMLForList += data;
     }
 
-    createLayout(layout){
+    createLayout(layout) {
         this.template = layout;
     }
+
     renderStruct(boxForInnerHTML) {
-        const _this = this;
-        if (_this.template) {
-            $(boxForInnerHTML).innerHTML = _this.template;
+        if (this.template) {
+            $(boxForInnerHTML).innerHTML = this.template;
         } else {
-            _this.template = `
+            this.template = `
                 <div id="container-song-render">
                     <div class="song-infor">
                         <div class="img-song">
-                            <img src="./resources/img/test.png" alt="@{alt-img}">
+                            <img src="" alt="@{alt-img}">
                         </div>
                         <div class="prossesses-bar"><button name="playTime"></button></div>
                         <div class="control-bar">
@@ -70,135 +80,149 @@ class MusicApp {
                     </div>
                     <div class="container-songLyrics">@{lyrics}</div>
                     <div class="container-songList">
-                        ${_this.HTMLForList}
+                        ${this.HTMLForList}
                     </div>
                 </div>
-                ${_this.fontButton}`;
-                
-            $(boxForInnerHTML).innerHTML = _this.template;
+                ${this.fontButton}`;
+            $(boxForInnerHTML).innerHTML = this.template;
         }
     }
 
     skipSong(isNext, isSelect = false) {
-        const _this = this;
-        let onPlay = $(`[data-index="${_this.currenSong}"] audio`);
-        
+        let onPlay = $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} audio`);
         onPlay.load();
         onPlay.pause();
-        
-       
+        $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} .nameSong img`).src = "";
+        $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} .nameSong img`).style.display = "none";
+
         if (!isSelect) {
-            if (_this.isRandom) {
-                _this.currenSong = _this.getRndInteger(0, _this.lengthList - 1);
-                $(`[data-index="${_this.currenSong}"] audio`).load();
+            if (this.isRandom) {
+                this.currenSong = this.getRndInteger(0, this.lengthList - 1);
             } else {
                 if (isNext) {
-                    _this.currenSong += 1;
-                    if (_this.currenSong >= _this.lengthList) {
-                        _this.currenSong = 0;
-                    }
-                    $(`[data-index="${_this.currenSong}"] audio`).load();
+                    this.currenSong = (this.currenSong + 1) % this.lengthList;
                 } else {
-                    _this.currenSong -= 1;
-                    if (_this.currenSong < 0) {
-                        _this.currenSong = _this.lengthList - 1;
-                    }
-                    $(`[data-index="${_this.currenSong}"] audio`).load();
+                    this.currenSong = (this.currenSong - 1 + this.lengthList) % this.lengthList;
                 }
             }
+            $(`[data-index="${this.currenSong}"] audio`).load();
         }
-        let act;
-        let box;
+
         try {
-            box = $(`${_this.boxSetCurrent} ${_this.typeActive}${_this.activeClassName}`).classList;
-            act = $(`[data-index="${_this.currenSong}"]`).classList;
-            box.remove(_this.activeClassName);
-            act.add(_this.activeClassName);
+            let box = $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName}`).classList;
+            let act = $(`[data-index="${this.currenSong}"]`).classList;
+            box.remove(this.activeClassName);
+            act.add(this.activeClassName);
+            $(`.img-song img`).src = `${$(`[data-index="${this.currenSong}"] .img-mini img`).src}`;
         } catch (err) {
             console.log("Có lỗi xảy ra:", err);
-            act = $(`[data-index="${_this.currenSong}"]`).classList;
-            act.add(_this.activeClassName);
+            let act = $(`[data-index="${this.currenSong}"]`).classList;
+            act.add(this.activeClassName);
         }
-        if(_this.isPlay){
-            
-            $(`[data-index="${_this.currenSong}"] audio`).play();
+
+        if (this.isPlay) {
+            $(`[data-index="${this.currenSong}"] audio`).play();
+            $(`[data-index="${this.currenSong}"] .nameSong img`).src = "https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif";
+            $(`[data-index="${this.currenSong}"] .nameSong img`).style.display = "inline-block";
         }
+
+        this.confix.currenSong = this.currenSong;
+        this.saveConfig();
     }
 
     controlBar() {
-        const _this = this;
         const methods = {
-            playMusic: (eventClient = "click", playBtn ="#play", pauseBtn = "#pause") => {
+            playMusic: (eventClient = "click", playBtn = "#play", pauseBtn = "#pause") => {
                 $(playBtn).addEventListener(eventClient, () => {
                     $(playBtn).style.display = "none";
                     $(pauseBtn).style.display = "inline-block";
-                    $(`[data-index="${_this.currenSong}"] audio`).play();
-                    _this.isPlay = true;
+                    $(`[data-index="${this.currenSong}"] audio`).play();
+                    $(`[data-index="${this.currenSong}"] .nameSong img`).src = "https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif";
+                    $(`[data-index="${this.currenSong}"] .nameSong img`).style.display = "inline-block";
+                    
+                    this.isPlay = true;
+                    this.confix.isRun = true;
+                    this.saveConfig();
                 });
 
                 $(pauseBtn).addEventListener(eventClient, () => {
                     $(pauseBtn).style.display = "none";
                     $(playBtn).style.display = "inline-block";
-                    $(`[data-index="${_this.currenSong}"] audio`).pause();
-                    _this.isPlay = false;
+                    $(`[data-index="${this.currenSong}"] audio`).pause();
+                    $(`[data-index="${this.currenSong}"] .nameSong img`).src = "";
+                    $(`[data-index="${this.currenSong}"] .nameSong img`).style.display = "none";
+                    this.isPlay = false;
+                    this.confix.isRun = false;
+                    this.saveConfig();
                 });
             },
 
             nextSong: (eventClient = "click", nextBtn = "#next") => {
                 $(nextBtn).addEventListener(eventClient, () => {
-                    _this.skipSong(true);
+                    this.skipSong(true);
                 });
             },
 
-            preSong: (eventClient = "click", preBtn ="#pre") => {
+            preSong: (eventClient = "click", preBtn = "#pre") => {
                 $(preBtn).addEventListener(eventClient, () => {
-                    _this.skipSong(false);
+                    this.skipSong(false);
                 });
             },
 
-            randomSong: (eventClient = "click", nameBtn ="#random") => {
+            randomSong: (eventClient = "click", nameBtn = "#random") => {
                 const btn = $(nameBtn);
+                if(this.isRandom){
+                    btn.classList.add(this.activeClassName);
+                }
                 btn.addEventListener(eventClient, () => {
-                    _this.isRandom = !_this.isRandom;
+                    this.isRandom = !this.isRandom;
+                    this.confix.isRandom = this.isRandom;
+                    this.saveConfig();
                     if (this.isRandom) {
-                        btn.classList.add(_this.activeClassName);
+                        btn.classList.add(this.activeClassName);
                     } else {
-                        btn.classList.remove(_this.activeClassName);
+                        btn.classList.remove(this.activeClassName);
                     }
                 });
             },
 
-            loopSong: (eventClient = "click", nameBtn ="#loop") => {
+            loopSong: (eventClient = "click", nameBtn = "#loop") => {
                 const btn = $(nameBtn);
+                if(this.isLoop){
+                    btn.classList.add(this.activeClassName);
+                }
                 btn.addEventListener(eventClient, () => {
-                    _this.isLoop = !_this.isLoop;
+                    this.isLoop = !this.isLoop;
+                    this.confix.isLoop = this.isLoop;
+                    this.saveConfig();
                     if (this.isLoop) {
-                        btn.classList.add(_this.activeClassName);
+                        btn.classList.add(this.activeClassName);
                     } else {
-                        btn.classList.remove(_this.activeClassName);
+                        btn.classList.remove(this.activeClassName);
                     }
                 });
             },
 
-            changeSong: (eventClient ="click", scale = ".container-songList") => {
+            changeSong: (eventClient = "click", scale = ".container-songList") => {
                 const scaleVar = $(scale);
                 scaleVar.addEventListener(eventClient, (e) => {
                     let tarGet = e.target;
                     if (!(e.target === scaleVar)) {
                         if (!tarGet.dataset.index) {
-                            let tmp;
                             do {
                                 tarGet = tarGet.parentElement;
-                                tmp = tarGet ? tarGet.dataset.index : null;
-                            } while (!tmp && tarGet);
+                            } while (!tarGet.dataset.index && tarGet);
                         }
-                        if (!(_this.currenSong == tarGet.dataset.index)) {
-                            _this.currenSong = tarGet.dataset.index;
-                            _this.skipSong(false, true);
+                        if (this.currenSong != tarGet.dataset.index) {
+                            this.currenSong = tarGet.dataset.index;
+                            $(`[data-index="${this.currenSong}"] audio`).load();
+                            this.skipSong(false, true);
+                            this.confix.currenSong = this.currenSong;
+                            this.saveConfig();
                         }
                     }
                 });
-            },
+            }
         }
         return methods;
     }
@@ -207,9 +231,9 @@ class MusicApp {
         this.boxSetCurrent = boxSetActiveSong;
         this.activeClassName = tag;
         this.typeActive = typeSelector;
-        const _this = this;
-        $(`[data-index="${_this.currenSong}"]`).classList.add(`${tag}`);
-        $(`[data-index="${_this.currenSong}"] audio`).load();
+        $(`[data-index="${this.confix.currenSong}"]`).classList.add(`${tag}`);
+        $(`[data-index="${this.confix.currenSong}"] audio`).load();
+        $(`.img-song img`).src = `${$(`[data-index="${this.currenSong}"] .img-mini img`).src}`;
     }
 
     getRndInteger(min, max) {
@@ -266,3 +290,5 @@ class MusicApp {
         }
     }
 }
+
+

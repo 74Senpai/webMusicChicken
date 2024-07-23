@@ -117,9 +117,9 @@ header{
     height: 50px;
     border-radius: 50%;
 }
-.container-songList .song .img-mini{
+/* .container-songList .song .img-mini{
     
-}
+} */
 .container-songList .song .more,
 .container-songList .song .nameSong,
 .container-songList .song .author{

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,28 +8,31 @@
     <link rel="stylesheet" href="./resources/styles/style.css">
     <title>Music Play</title>
 </head>
+
 <body>
     <header>
-    
     </header>
     <div id="container-song">
-        
-    </div>  
+
+    </div>
     <script src="https://kit.fontawesome.com/dae763dd72.js" crossorigin="anonymous"></script>
     <script src="./resources/js/app.js"></script>
     <script>
-         document.addEventListener("DOMContentLoaded", async function() {
+
+        document.addEventListener("DOMContentLoaded", async function () {
             const app = new MusicApp();
+            await app.loadConfig();
+
             const data = await app.getData('fakeAPI.json');
             let tmp = await Object.keys(data.play_list).length;
             // let dds = songList[0];
             // console.log("sdadad", songList[0].img);
             app.setLengthList(tmp);
-            const HTML = (()=>{
-                    let HTMLs = "";
-                    let songList = data.play_list;
-                    for(let i = 0 ; i < tmp ; i++){
-                        HTMLs += `
+            const HTML = (() => {
+                let HTMLs = "";
+                let songList = data.play_list;
+                for (let i = 0; i < tmp; i++) {
+                    HTMLs += `
                         <div class="song-tag">
                             <div class="song" data-index=${i}>
                                 <audio preload="none">
@@ -36,19 +40,19 @@
                                 </audio>
                                 <div class="img-mini row"><img src="${songList[i].img}" alt="@{alt}"></div>
                                 <div class="infor-song">
-                                    <div class="nameSong">${songList[i].name_song}</div>
+                                    <div class="nameSong">${songList[i].name_song}<img width="12px" height="12px" style="display: none; background-color: rgba: (0,0,0,0); margin-left:10px;"src=""></div>
                                     <div class="author">${songList[i].author}</div>
                                 </div> 
                                 <div class="more">...</div> 
                             </div>
                         </div>
                          `
-                    }
-                    return HTMLs;
-                })();
-            app.createHTMLForList(``,HTML);
+                }
+                return HTMLs;
+            })();
+            app.createHTMLForList(``, HTML);
             app.renderStruct('#container-song');
-            app.setCurrentSong('.song-tag','active');
+            app.setCurrentSong('.song-tag', 'active');
             app.eventProcessor();
             const control = app.controlBar();
             control.playMusic();
@@ -57,8 +61,11 @@
             control.randomSong();
             control.loopSong();
             control.changeSong();
+
+
         });
     </script>
-    
+
 </body>
+
 </html>
