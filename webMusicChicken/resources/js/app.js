@@ -23,12 +23,14 @@ class MusicApp {
             isRun: false,
             isLoop: false,
             isRandom: false,
-            currenSong: 0
+            currenSong: 0,
+            volume : 100
         };
         this.confix = config;
         this.isLoop = config.isLoop;
         this.isRandom = config.isRandom;
         this.currenSong = config.currenSong;
+        this.volume_value = config.volume;
     }
 
     loadDataConfig(data){
@@ -118,7 +120,6 @@ class MusicApp {
         onPlay.pause();
         $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} .${this.dataConfig.class_name_song} img`).src = "";
         $(`${this.boxSetCurrent} ${this.typeActive}${this.activeClassName} .${this.dataConfig.class_name_song} img`).style.display = "none";
-        $(`.${_this.dataConfig.class_bar}`).innerText =  "";
         if (!isSelect) {
             if (this.isRandom) {
                 this.currenSong = this.getRndInteger(0, this.lengthList - 1);
@@ -145,19 +146,27 @@ class MusicApp {
         }
         let audioElement = $(`[data-index="${this.currenSong}"] audio`);
         audioElement.preload = "auto";
-        audioElement.addEventListener('loadedmetadata', () => {
-            $(`.${_this.dataConfig.class_bar}`).innerText =  `${audioElement.duration}`;
-            audioElement.preload = "none";
-        });
-
-        if (this.isPlay) {
-            audioElement.play();
-            $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).src = "https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif";
-            $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).style.display = "inline-block";
-        }
+        _this.getPlayTime();
+        _this.eventProcessorApp();
+        this.playSong();
 
         this.confix.currenSong = this.currenSong;
         this.saveConfig();
+    }
+
+    playSong(){
+        let audio = $(`[data-index="${this.currenSong}"] audio`);
+        if(this.isPlay){
+            audio.play();
+            audio.volume = this.volume_value;
+            $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).src = "https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif";
+            $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).style.display = "inline-block";
+            
+        }else{
+            audio.pause();
+            $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).style.display = "none";
+        }
+        
     }
 
     controlBar() {
@@ -166,22 +175,18 @@ class MusicApp {
                 $(playBtn).addEventListener(eventClient, () => {
                     $(playBtn).style.display = "none";
                     $(pauseBtn).style.display = "inline-block";
-                    $(`[data-index="${this.currenSong}"] audio`).play();
-                    $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).style.display = "inline-block";
-                    $(`[data-index="${this.currenSong}"] audio`).volume = "0.2";
                     this.isPlay = true;
                     this.confix.isRun = true;
+                    this.playSong();
                     this.saveConfig();
                 });
 
                 $(pauseBtn).addEventListener(eventClient, () => {
                     $(pauseBtn).style.display = "none";
                     $(playBtn).style.display = "inline-block";
-                    $(`[data-index="${this.currenSong}"] audio`).pause();
-                    $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).src = "";
-                    $(`[data-index="${this.currenSong}"] .${this.dataConfig.class_name_song} img`).style.display = "none";
                     this.isPlay = false;
                     this.confix.isRun = false;
+                    this.playSong();
                     this.saveConfig();
                 });
             },
@@ -264,17 +269,17 @@ class MusicApp {
     
         const audioElement = $(`[data-index="${_this.currenSong}"] audio`);
     
-        await (async () => {
+        await (() => {
             $(`[data-index="${_this.currenSong}"]`).classList.add(`${tag}`);
             audioElement.preload = "auto"; 
-            audioElement.load();      
+            audioElement.load();  
+            audioElement.volume = _this.volume_value;
             $(`.${_this.dataConfig.class_song_img} img`).src = `${$(`[data-index="${_this.currenSong}"] .${_this.dataConfig.class_song_img_mini} img`).src}`;
         })();
+        this.setVolume();
+        this.getPlayTime();
+        this.eventProcessorApp();
     
-        audioElement.addEventListener('loadedmetadata', () => {
-            $(`.${_this.dataConfig.class_bar}`).innerText =  `${audioElement.duration}`;
-            audioElement.preload = "none";
-        });
     }
     
 
@@ -282,60 +287,181 @@ class MusicApp {
         return Math.floor(Math.random() * (max - min)) + min;
     }
 
-    eventProcessor(eventClient = 'click', bar = `.${this.dataConfig.class_prosseses}`, playTimeBar = `.${this.dataConfig.class_bar}`) {
-        const btn = $(bar);
-        console.log("bar," ,bar);
-        const playTime = $(playTimeBar);
+    eventProcessorApp() {
+        const _this = this;
+        let eventClient = 'click';
+        let btn = $(`.${this.dataConfig.class_prosseses}`);
+        let playTime = $(`.${this.dataConfig.class_bar}`);
         let isDragging = false;
         let timeOut;
+        let audio = $(`[data-index="${this.currenSong}"] audio`);
+        let audioCurrenTime;
+        audio.addEventListener('loadedmetadata', () => {
+            const duration = audio.duration.toFixed(1);
+            playTime.style.width = "0px";
 
-        btn.addEventListener(eventClient, () => {
+            const updateWidthByTime = ()=>{
+                const currTime = audio.currentTime.toFixed(1);
+                playTime.style.width = `${currTime / duration * 100}%`;
+            };
+
+            audio.addEventListener('timeupdate', updateWidthByTime);
+
+            btn.addEventListener(eventClient, () => {
+                clearTimeout(timeOut);
+                btn.classList.add(this.activeClassName);
+            });
+
+            btn.addEventListener('mouseout', () => {
+                timeOut = setTimeout(() => {
+                    btn.classList.remove(this.activeClassName);
+                }, 500);
+            });
+
+            btn.addEventListener('mousedown', (event) => {
+                isDragging = true;
+                btn.classList.add(this.activeClassName);
+                updatePlayTimeWidth(event);
+            });
+
+            document.addEventListener('mousemove', (event) => {
+                if (isDragging) {
+                    updatePlayTimeWidth(event);
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    setCurrentTime();
+                    setTimeout(() => {
+                        btn.classList.remove(this.activeClassName);
+                    }, 500);
+                }
+            });
+
+            const updatePlayTimeWidth = (event) => {
+                clearTimeout(timeOut);
+                audio.removeEventListener('timeupdate',updateWidthByTime);
+                const rect = btn.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const width = rect.width;
+                const percent = Math.min(Math.max((x / width) * 100, 0), 100);
+                playTime.style.width = `${percent}%`;
+                audioCurrenTime = (percent * duration) / 100;
+                
+                $(`.${_this.dataConfig.class_time}`).innerText = `
+                ${_this.secondToMin(audioCurrenTime)}/ ${_this.secondToMin(duration)}
+            `;
+            };
+
+            const setCurrentTime =()=>{
+                audio.currentTime = audioCurrenTime;
+                audio.addEventListener('timeupdate', updateWidthByTime);
+                
+            };
+        });
+
+        audio.load();
+    }
+
+    secondToMin(seconds){
+        
+        if(!typeof seconds === Number){
+            seconds = parseInt(seconds);
+        }
+        const min = Math.floor(seconds / 60);
+        const sec = Math.floor(seconds % 60);
+        return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    async getPlayTime() {
+        const _this = this;
+        let audio = $(`[data-index="${_this.currenSong}"] audio`);
+        audio.preload = "auto";
+        let duration;
+        let playTime;
+        audio.addEventListener('loadedmetadata', () => {
+            duration = audio.duration;
+            playTime = _this.secondToMin(duration);
+            $(`.${_this.dataConfig.class_time}`).innerText = `
+                0:00/ ${playTime}
+            `;
+        });
+
+        audio.addEventListener('timeupdate', () => {
+            let currTime = audio.currentTime.toFixed(1);
+            $(`.${_this.dataConfig.class_time}`).innerText = `
+                ${_this.secondToMin(currTime)} / ${playTime}
+            `;
+        });
+
+        audio.addEventListener('ended', () => {
+            if(!_this.isLoop){
+                _this.skipSong(true);
+            }else{
+                audio.currentTime = 0;
+                audio.play();
+            }
+        })
+        
+        audio.load();
+    }
+
+    setVolume(){
+        const _this = this;
+        let isDraggingVolume = false;
+        let timeOut;
+        let btn = $(`.${this.dataConfig.class_control_volume}`);
+        let volume = $(`.${this.dataConfig.volume_bar}`);
+        
+        volume.style.width = `${_this.confix.volume * 100}%`;
+
+        // btn.addEventListener('mouseover', ()=>{
+        //     volume.style.display = "block";
+        // });
+
+        // btn.addEventListener('mouseout', ()=>{
+        //     volume.style.display = "none";
+        // });
+        btn.addEventListener('click', () => {
             clearTimeout(timeOut);
-            btn.classList.add(this.activeClassName);
+            volume.classList.add(this.activeClassName);
         });
 
         btn.addEventListener('mouseout', () => {
             timeOut = setTimeout(() => {
-                btn.classList.remove(this.activeClassName);
+                volume.classList.remove(this.activeClassName);
             }, 500);
         });
 
-        btn.addEventListener('mousedown', (event) => {
-            clearTimeout(timeOut);
-            isDragging = true;
-            btn.classList.add(this.activeClassName);
-            this.updatePlayTimeWidth(event);
+        btn.addEventListener('mousedown', (event)=>{
+            
+            isDraggingVolume = true;
+            updateVolumeWidth(event);
         });
 
-        document.addEventListener('mousemove', (event) => {
-            if (isDragging) {
-                clearTimeout(timeOut);
-                this.updatePlayTimeWidth(event);
+        document.addEventListener('mousemove', (event)=>{
+            if(isDraggingVolume){
+                updateVolumeWidth(event);
             }
         });
 
-        document.addEventListener('mouseup', () => {
-            if (isDragging) {
-                isDragging = false;
-                setTimeout(() => {
-                    btn.classList.remove(this.activeClassName);
-                }, 500);
-            }
+        document.addEventListener('mouseup', ()=>{
+            isDraggingVolume = false;
         });
 
-        this.updatePlayTimeWidth = (event) => {
+        const updateVolumeWidth = (event)=>{
             clearTimeout(timeOut);
             const rect = btn.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const width = rect.width;
             const percent = Math.min(Math.max((x / width) * 100, 0), 100);
-            playTime.style.width = `${percent}%`;
+            volume.style.width = `${percent.toFixed(2)}%`;
+            _this.confix.volume = (percent/100).toFixed(2);
+            $(`[data-index="${this.currenSong}"] audio`).volume = (percent/100);
+            this.saveConfig();
         }
-    }
-
-    endedEvent(){
-        
-        
     }
 }
 
