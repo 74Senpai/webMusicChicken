@@ -457,7 +457,8 @@ class MusicApp {
             const x = event.clientX - rect.left;
             const width = rect.width;
             const percent = Math.min(Math.max((x / width) * 100, 0), 100);
-            volume.style.width = `${percent.toFixed(2)}%`;
+
+            volume.style.width = `${percent.toFixed(2)}%`;//set width
             _this.confix.volume = (percent/100).toFixed(2);
             $(`[data-index="${this.currenSong}"] audio`).volume = (percent/100);
             this.saveConfig();
