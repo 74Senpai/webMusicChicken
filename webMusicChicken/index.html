@@ -4,26 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="./resources/styles/keyframe.css">
-    <link rel="stylesheet" href="./resources/styles/style.css"> -->
+    <link rel="stylesheet" href="./resources/styles/keyframe.css">
+    <link rel="stylesheet" href="./resources/styles/style.css">
     <title>Music Play</title>
 </head>
 
 <body>
     <header>
-        <i class="fa-solid fa-volume-off"></i>
-        <i class="fa-solid fa-volume-low"></i>
-        <i class="fa-solid fa-volume-high"></i>
     </header>
     <div id="container-song">
 
     </div>
     <script src="https://kit.fontawesome.com/dae763dd72.js" crossorigin="anonymous"></script>
-    <script src="./resources/js/mucsicAppRender.js"></script>
-    <script>
-        
+    <script type="module">
+        import App from './resources/js/mucsicAppRender.js';
+        console.log("hihi",App);
         document.addEventListener("DOMContentLoaded", async function () {
-        const app = MusicApp();
+        const app = App.app();
         const data = await app.getData('fakeAPI.json');
         let tmp = await Object.keys(data.play_list).length;
         app.setLengthList(tmp);
@@ -62,138 +59,6 @@
         app.appStart();
     });
     </script>
-    <!-- <script>
-
-        document.addEventListener("DOMContentLoaded", async function () {
-            const app = await new MusicApp(
-                {
-                    class_parent : "container-song",
-                        class_box_play_song : "song-onplay",
-                            class_song_infor : "song-infor",
-                                class_song_img : "song-img",
-                                    alt_img : "day la anh cuar bai hat",
-                            class_control : "song-control",
-                                class_prosseses : "song-prosseses",
-                                    class_time : "time-play",
-                                    class_bar : "prosseses-bar",
-                                class_control_song : "song-control-button",
-                                    id_play : "play-btn",
-                                    id_pause : "pause-btn",
-                                    id_loop : "loop-btn",
-                                    id_random :  "random-btn",
-                                    id_next : "next-btn",
-                                    id_pre : "pre-btn",
-                                class_control_volume : "volume-contol",
-                                    class_volume : "volume-box",
-                                        class_value : "value-volume",
-                                        volume_bar : "volume-bar",
-                        class_lyrics : "box-lyrics",
-                            class_box_lyrics : "song-lyrics",
-                                class_on_active : "text-active",
-                        class_song_list : "song-list",
-                            class_song_tag : "song-tag",
-                                class_song : "song",
-                                    class_song_img_mini : "song-img-mini",
-                                    class_song_infor : "song-infor",
-                                        class_name_song : "name-song",
-                                        class_author : "name-author",
-                                    class_more_infor : "more-infor",
-                                        id_more : "more-btn"
-                }
-            );
-            // let dds = songList[0];
-            // console.log("sdadad", songList[0].img);
-            
-            await app.createLayout(`
-                <div class="@{class_parent}">
-                    <div>
-                        <div class="@{class_box_play_song}">
-                            <div class="@{class_song_infor}">
-                                <div class="@{class_song_img}">
-                                    <img src="@{img_src}" alt="@{alt_img}">
-                                </div>
-                            </div>
-                            <div class="@{class_control}">
-                                <div class="@{class_prosseses}" width="100px"  style="background-color: red; width:100px;">
-                                    <div class="@{class_time}"></div>
-                                    <div class="@{class_bar}" style="background-color:pink; height:5px; "></div>
-                                </div>
-                                <div class="@{class_control_song}">
-                                    <button id="@{id_loop}"><i class="fa-solid fa-arrows-rotate"></i></button>
-                                    <button id="@{id_pre}"><i class="fa-solid fa-backward"></i></button>
-                                    <button id="@{id_pause}"><i class="fa-solid fa-pause"></i></button>
-                                    <button id="@{id_play}"><i class="fa-solid fa-play"></i></button>
-                                    <button id="@{id_next}"><i class="fa-solid fa-forward"></i></button>
-                                    <button id="@{id_random}"><i class="fa-solid fa-shuffle"></i></button>
-                                </div>
-                                <div class="@{class_control_volume}" style="width:60px; background-color:yellow;">
-                                    <div class="@{class_volume}">
-                                        <i class="fa-solid fa-volume-low"></i>
-                                        <div class="@{volume_bar}" style="background-color:black; height:5px; display:block;"></div>
-                                        <div class="@{class_value}"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="@{class_lyrics}">
-                            <div class="@{class_box_lyrics}">
-                                <div class="@{class_on_active}"></div>
-                            </div>
-                        </div>
-                        <div class="@{class_song_list}">
-                            @{HTML-for-list}
-                        </div>
-                    </div>
-                </div>
-            `);
-            await app.loadConfig();
-            const data = await app.getData('fakeAPI.json');
-            let tmp = await Object.keys(data.play_list).length;
-            app.setLengthList(tmp);
-            const HTML = (() => {
-                let HTMLs = "";
-                let songList = data.play_list;
-                for (let i = 0; i < tmp; i++) {
-                    HTMLs += `
-                    <div class="@{class_song_tag}">
-                                <div class="@{class_song}" data-index="${i}">
-                                    <audio preload="none">
-                                        <source src="${songList[i].audio_src}" type="audio/ogg">
-                                    </audio>
-                                    <div class="@{class_song_img_mini}">
-                                        <img src="${songList[i].img}" alt="@{alt}">    
-                                    </div>
-                                    <div class="@{class_song_infor}">
-                                        <div class="@{class_name_song}">
-                                            ${songList[i].name_song}<img width="12px" height="12px" style="display: none; background-color: rgba: (0,0,0,0); margin-left:10px;"src="">    
-                                        </div>
-                                        <div class="@{class_author}">
-                                            ${songList[i].author}
-                                        </div>
-                                    </div>
-                                    <div class="@{class_more_infor}">
-                                        <button id="@{id_more}">...</button>
-                                    </div>
-                                </div>
-                            </div>
-                         `
-                }
-                return HTMLs;
-            })();
-            await app.createHTMLForList(HTML);
-            await app.renderStruct('#container-song');
-            await app.setCurrentSong('.song-tag', 'active');
-            const control = app.controlBar();
-            control.playMusic();
-            control.nextSong();
-            control.preSong();
-            control.randomSong();
-            control.loopSong();
-            control.changeSong();
-
-        });
-    </script> -->
-
 </body>
 
 </html>

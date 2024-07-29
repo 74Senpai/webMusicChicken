@@ -22,38 +22,45 @@ header{
 
 
 /* --------------------------- Body ------------------------------- */
-#container-song{
+.container-song{
     max-width: 400px;
-    padding: 5px;
+    padding: 5px;  
 }
-#container-song-render > div{
+.container-song> div{
     border-radius: 8px;
     margin: 5px;
     padding: 5px;
 }
+.song-onplay{
+    background-color: #b300ff;
+    max-width: 370px;
+    max-height: 360px;
+    width: 380px;
+    height: 360px;
+    padding: 5px;
+}
 
-#container-song #container-song-render .song-infor{
-    height: 330px;
+.container-song .song-onplay .song-infor{
+    height: 250px;
     background-color: blueviolet;
 }
-#container-song #container-song-render .img-song > img{
+.container-song .song-onplay .song-img > img{
     width: 250px;
     height: 250px;
     border-radius: 50%;
     animation: rotateImg 20s linear infinite;
     z-index: 9;
 }
-.img-song{
+.song-img{
     width: 100%;
     height: 250px;
     overflow: hidden;
 }
-
-#container-song #container-song-render .control-bar{
+.container-song .song-control{
     z-index: 99;
 }
 
-#container-song #container-song-render .control-bar > button{
+.song-control-button button{
     background-color: rgba(0,0,0,0);
     border: none;
     color: white;
@@ -65,23 +72,35 @@ header{
     width: 30px;
     height: 30px;
 }
-#container-song #container-song-render .control-bar button[name="pause-btn"]{
+#pause-btn{
     display: none;
 }
-#container-song #container-song-render .prossesses-bar{
+.container-song .song-control .song-prosseses{
     width: 90%;
     height: 5px;
     background-color: rgba(255, 255, 255, 0.77);
-    margin: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
     position: relative;
     top: 0;
     left: 0;
     text-align: left;
 }
 
-#container-song-render .prossesses-bar > button{
+.container-song .song-control .control-time{
+    width: 100%;
+    border: 1px solid white;
+    padding-bottom: 5px;
+    max-height: 20px;
+    height: 20px;
+}
+
+.container-song .song-control .control-time  div{
+    text-align: left;
+    display: inline-block;
+    font-size: 11px;
+}
+
+.container-song .song-control .song-prosseses .prosseses,
+.container-song .song-control .song-prosseses .time-play{
     position: absolute;
     background-color: rgba(201, 0, 0, 0.879);
     border: none;
@@ -93,15 +112,38 @@ header{
     padding-block: 0px;
 }
 
+.song-prosseses{
+    width: 80% !important;
+    
+}
 
 /* -------- */
 
-#container-song #container-song-render .container-songList{
-    /* height: 50vh; */
-    background-color: pink;
+.volume-control{
+    text-align: left;
+    width: 100px;
+    
 }
 
-.container-songList .song{
+.volume-control div{
+    display: inline-block;
+}
+
+#volume-icon{
+    width: 15%;
+}
+.volume-box{
+    width: 80%;
+    display: none;
+    position: relative;
+    top: -4.5px;
+}
+
+.volume-box div{
+    display: none;
+}
+
+.song-list .song-tag{
     background-color: #0f0f0fe8;
     text-align: left;
     color: white;
@@ -112,24 +154,24 @@ header{
     box-shadow: 0px 4px 5px rgb(84, 73, 73);
     max-height: 55px;
 }
-.container-songList .song .img-mini img{
+.song-list .song-tag .song-img-mini img{
     width: 50px;
     height: 50px;
     border-radius: 50%;
 }
-/* .container-songList .song .img-mini{
-    
-} */
-.container-songList .song .more,
-.container-songList .song .nameSong,
-.container-songList .song .author{
+.song-tag .song-img-mini{
+    display: inline-block;
+}
+.song-list .song-tag .song .more-infro,
+.song-list .song-tag .song .name-song,
+.song-list .song-tag .song .name-author{
     max-width: 90%;
     overflow: hidden;
     font-size: 14px;
     /* text-wrap: ; */
 }
 
-.container-songList .song .nameSong{
+.song-list .song-tag .song .name-song{
     height: 25px;
     /* border: 1px solid black; */
     display: block;
@@ -137,38 +179,43 @@ header{
     margin-top: 5px;
 }
 
-.container-songList .song .author{
+.song-list .song-tag .song .name-author{
     display: block;
     font-size: 12px;
     text-align: right;
     color: #6d6a6a;
 }
 
-.more{
+.more-infor{
     display: inline-block;
-    /* position: relative;
-    top: 15px;
-    left: 6px;
-    width: 5px; */
+    position: relative;
+    top:-15px;
+    background-color: rgba(0,0,0,0);
+
 }
 
-#container-song #container-song-render .container-songLyrics{
+.more-infor button{
+    width: 3px;
+    background-color: rgba(0,0,0,0);
+    border: none;
+}
+
+.box-lyrics{
     display: none;
 }
 
-.control-bar .active{
-    background-color: #ffffff00;
+.song-control-button .active i{
+    color: #ff0000;
 }
 
-.control-bar .active i{
-    color: #b300ff;
-}
-
-.container-songList .active{
+.song-list .song-tag .active{
     background-color: #4d4d4deb ;
+    border-radius: 2px;
+    width: 100%;
+    
 }
 
-.infor-song{
+.song-infor{
     display: inline-block;
     /* background-color: red; */
     width: 70%;
