@@ -173,7 +173,6 @@ class MusicApp {
             const audio = $(`[data-index="${currenSong}"] audio`);
             let bar = button.querySelector('.bar');
             let currentTime;
-
             const updateWidth = (event) => {
                 clearTimeout(timeOut);
                 const rect = button.getBoundingClientRect();
@@ -241,7 +240,7 @@ class MusicApp {
             bar.style.width = `${confix.volume * 100}%`;
             const updateWidth = (event) => {
                 clearTimeout(timeOut);
-                const rect = button.getBoundingClientRect();
+                const rect = $(`.${dataConfig.class_volume}`).getBoundingClientRect();
                 const x = event.clientX - rect.left;
                 const width = rect.width;
                 const percent = Math.min(Math.max((x / width) * 100, 0), 100);
@@ -252,20 +251,24 @@ class MusicApp {
                 saveConfig();
             };
 
-            button.addEventListener(eventClient, () => {
+            button.addEventListener('mouseover', () => {
                 clearTimeout(timeOut);
-                bar.classList.add(activeClassName);
+                button.classList.add(activeClassName);
+                bar.style.display = 'inline-block';
+                
             });
 
             button.addEventListener('mouseout', () => {
                 timeOut = setTimeout(() => {
-                    bar.classList.remove(activeClassName);
+                    button.classList.remove(activeClassName);
+                    bar.style.display = 'none';
                 }, 500);
             });
 
             button.addEventListener('mousedown', (event) => {
                 isDragging = true;
                 bar.classList.add(activeClassName);
+                bar.style.display = 'inline-block';
                 updateWidth(event);
             });
 
@@ -280,6 +283,9 @@ class MusicApp {
                     isDragging = false;
                     setTimeout(() => {
                         button.classList.remove(activeClassName);
+                        bar.classList.remove(activeClassName);
+                        bar.style.display = 'none';
+
                     }, 500);
                 }
             });
@@ -382,6 +388,7 @@ class MusicApp {
                 box.remove(activeClassName);
                 act.add(activeClassName);
                 $(`.${dataConfig.class_song_img} img`).src = `${$(`[data-index="${currenSong}"] .${dataConfig.class_song_img_mini} img`).src}`;
+                $(`.${dataConfig.name_song}`).innerText = `${$(`[data-index="${currenSong}"] .${dataConfig.class_name_song}`).innerText}`;
             } catch (err) {
                 console.log("Có lỗi xảy ra:", err);
                 let act = $(`[data-index="${currenSong}"]`).classList;
@@ -407,16 +414,20 @@ class MusicApp {
                 if (tarGet === songList) {
                     console.log('out side list');
                 } else {
-                    let index = tarGet.closest(`[data-index]`);
-                    if (!index) {
-                        index = tarGet.querySelector('[data-index]');
-                    }
-                    if (currenSong != index.dataset.index) {
-                        currenSong = index.dataset.index;
-                        $(`[data-index="${currenSong}"] audio`).load();
-                        skipSong(false, true);
-                        confix.currenSong = currenSong;
-                        saveConfig();
+                    if(tarGet === $(`.${dataConfig.class_more_infor}`) || tarGet.closest(`.${dataConfig.class_more_infor}`)){
+                        alert('More infor');
+                    }else{
+                        let index = tarGet.closest(`[data-index]`);
+                        if (!index) {
+                            index = tarGet.querySelector('[data-index]');
+                        }
+                        if (currenSong != index.dataset.index) {
+                            currenSong = index.dataset.index;
+                            $(`[data-index="${currenSong}"] audio`).load();
+                            skipSong(false, true);
+                            confix.currenSong = currenSong;
+                            saveConfig();
+                        }
                     }
                 }
             });
@@ -448,6 +459,7 @@ class MusicApp {
                 audioElement.load();
                 audioElement.volume = volume_value;
                 $(`.${dataConfig.class_song_img} img`).src = `${$(`[data-index="${currenSong}"] .${dataConfig.class_song_img_mini} img`).src}`;
+                $(`.${dataConfig.name_song}`).innerText = `${$(`[data-index="${currenSong}"] .${dataConfig.class_name_song}`).innerText}`;
             })();
             getPlayTime();
             handlePlayTime($(`.${dataConfig.class_prosseses}`));

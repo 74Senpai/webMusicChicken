@@ -190,14 +190,14 @@ header{
     display: inline-block;
     position: relative;
     top:-15px;
-    background-color: rgba(0,0,0,0);
-
+    background-color: rgba(119, 119, 119, 0);
 }
 
 .more-infor button{
     width: 3px;
     background-color: rgba(0,0,0,0);
     border: none;
+    color: white;
 }
 
 .box-lyrics{
@@ -230,5 +230,9 @@ header{
     display: block;
     float: left;
     /* border: 1px solid black; */
+}
+
+.volume-control.active{
+    background-color: aquamarine !important;
 }
 /* ---------------------------///// ------------------------------- */

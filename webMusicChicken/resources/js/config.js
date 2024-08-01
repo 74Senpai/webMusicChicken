@@ -34,13 +34,17 @@ const configHTML = {
         id_more: "more-btn",
         current_time: "current-time",
         duration_time : "duration-time",
-        control_time : "control-time"
+        control_time : "control-time",
+        name_song : "name-song-onplay"
     },
     template :`
         <div class="@{class_parent}">
             <div>
                 <div class="@{class_box_play_song}">
                     <div class="@{class_song_infor}">
+                        <div class="@{name_song}">
+
+                        </div>
                         <div class="@{class_song_img}">
                             <img src="@{img_src}" alt="@{alt_img}">
                         </div>
@@ -65,7 +69,7 @@ const configHTML = {
                         <div class="@{class_control_volume}">
                             <div id="volume-icon"><i class="fa-solid fa-volume-low"></i></div>
                             <div class="@{class_volume}">
-                                <div class="@{volume_bar}" style="background-color:black; height:5px; display:block;"></div>
+                                <div class="@{volume_bar}" style="background-color:black; height:5px; display:none;"></div>
                             </div>
                         </div>
                     </div>
