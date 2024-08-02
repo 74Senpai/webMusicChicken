@@ -8,9 +8,13 @@
             |       |       └── song-img
             |       |                └── alt,...
             |       └── song-control
-            |               ├── prosseesses-bar
-            |               |       ├── show-time
-            |               |       └── bar 
+            |               ├── control-time
+            |               |       ├──current-time
+            |               |       ├──class_prosseses        
+            |               |       |        ├── class-time-bar
+            |               |       |        └── bar
+            |               |       └── duration-time
+            |               |
             │               ├── control_btn
             |               ├── play-btn
             |               │        ├── pause-btn
@@ -20,8 +24,9 @@
             |               │        └── random-btn
             |               |
             |               └── control-volume
-            |                       ├── value
-            |                       └── bar       
+            |                       ├── volume-icon
+            |                       └── volume-bar
+            |                                └── bar      
             ├── box-lyrics
             |       └── lyrics
             |              └── lyrics-onplay

@@ -1,0 +1,16 @@
+{
+    "list_playlist":[
+        {
+            "name_playlist" : "Nhac cua sep",
+            "src" : "fakeAPI.json"
+        },
+        {
+            "name_playlist" : "Son Tung M-TP",
+            "src" : "fakeAPI.json"
+        },
+        {
+            "name_playlist" : "Thien Ly Oi",
+            "src" : "fakeAPI.json"
+        }
+    ]
+}
