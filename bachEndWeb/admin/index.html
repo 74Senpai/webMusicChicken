@@ -7,27 +7,7 @@
     <title>Admin</title>
 </head>
 <body>
-    <header>
-        <div class="tools-bar">
-            <div class="">Home</div>
-            <div class="">PlayList</div>
-            <div class="">Albums</div>
-            <div class="">Songs</div>
-            <div class="">Authors</div>
-            <div class="">Singers</div>
-            <div class="">Error</div>
-            <div class="">Account Client</div>
-            <div class="">Your</div>
-        </div>
-        Over View
-        <button>Refresh</button>
-    </header>
-    <div class="over-view">
-        <iframe src="../../webMusicChicken/index.html" frameborder="0"></iframe>
-    </div>
-    <script type="module">
-        import myCore from "./resources/js/myCore/core.js";
-        myCore.render();
-    </script>
+    <div id="root"></div>
+    <script type="module" src="./resources/js/myCore/view.js"></script>
 </body>
 </html>

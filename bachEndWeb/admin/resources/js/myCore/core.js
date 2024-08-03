@@ -1,17 +1,27 @@
 import communicate from "./communicate.js";
 
-let store = communicate.contact("Store");
-store.data = "Khong Hihi";
+const $ = document.querySelector.bind(document);
+window.handle = communicate.contact;
 
-const outPut = communicate.contact("output");
+let output = communicate.contact("output");
+const input = communicate.contact("input");
+// window.dataRequest = communicate.request;
 
-const myCore = {
-    render(){
-        store.data = "Khong Hihi";
-        console.log(outPut);
-        console.log("data", store.data);
-    }
+export default function myCore(...data){
+    // console.log(data);
+    
+    return data.join();
+};
+
+export function render(){
+    $(`#root`).innerHTML = `${output.sendOutput()}`;
 }
 
+(async ()=>{
+    let data = await communicate.request("playlist", "playlist.json");
+    communicate.send("log", data, "add");
+    communicate.send("store", data, "add", "playlist");
+})();
 
-export default myCore;
+
+

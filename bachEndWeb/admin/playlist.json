@@ -1,0 +1,25 @@
+{
+    "list_playlist":[
+        {
+            "name_playlist" : "Nhac cua sep",
+            "length" : "",
+            "release_date" : "",
+            "view" : "",
+            "infor" : "fakeAPI.json"
+        },
+        {
+            "name_playlist" : "Son Tung M-TP",
+            "length" : "",
+            "release_date" : "",
+            "view" : "",
+            "infor" : "fakeAPI.json"
+        },
+        {
+            "name_playlist" : "Thien Ly Oi",
+            "length" : "",
+            "release_date" : "",
+            "view" : "",
+            "infor" : "fakeAPI.json"
+        }
+    ]
+}

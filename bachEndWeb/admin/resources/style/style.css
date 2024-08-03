@@ -45,6 +45,7 @@ header{
     max-width: 100%;
     min-width: 58rem;
     height: 1.5rem;
+    overflow: hidden;
 }
 .row > div{
     display: inline-block;
