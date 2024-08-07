@@ -156,7 +156,7 @@ class MusicApp {
             });
 
             audio.addEventListener('ended', () => {
-                if (!isLoop) {
+                if (!confix.isLoop) {
                     skipSong(true);
                 } else {
                     audio.currentTime = 0;
@@ -370,7 +370,7 @@ class MusicApp {
             $(`${boxSetCurrent} ${typeActive}${activeClassName} .${dataConfig.class_name_song} img`).src = "";
             $(`${boxSetCurrent} ${typeActive}${activeClassName} .${dataConfig.class_name_song} img`).style.display = "none";
             if (!isSelect) {
-                if (isRandom) {
+                if (confix.isRandom) {
                     currenSong = getRndInteger(0, lengthList - 1);
                 } else {
                     if (isNext) {
